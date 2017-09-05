@@ -1,7 +1,12 @@
 # pygrafana
 
-Python Library to consume Grafana API.
+Python Library to consume Grafana's API.
 
+
+## Instalation
+```
+$ sudo pip install pygrafana
+```
 
 ## First - Login into Grafana
 
