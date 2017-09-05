@@ -1,11 +1,15 @@
-#!/bin/python2.7
+#!/usr/bin/python2.7
 
 # Copyrights (c) Sec4You Consulting.
 
+# === Change log:
+#
+# 2017, Sep, Angelo Moura
+#    - Changed self.oim_server from os.getenv to a string
+#    - Removed unecessary imports
+
 import requests
 import yaml
-from time import sleep
-from os import getenv
 
 class GrafanaManager(object):
   def __init__(self, server, port):
@@ -17,7 +21,7 @@ class GrafanaManager(object):
     self.zbx_pswd = ""
     self.zbx_url = ""
 
-    self.oim_server = str(getenv('OIM_SERVER'))
+    self.oim_server = ""
 
   def Login(self,username,password):
     if not self.proxies:
