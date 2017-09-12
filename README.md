@@ -8,12 +8,13 @@ Python Module to consume Grafana's API.
 $ sudo pip install pygrafana
 ```
 
-## First - Login into Grafana
+## Login into Grafana
+
 
 ```
+URL = http://<USERNAME>:<PASSWORD>@<SERVER>:<PORT>
 >>> from pygrafana import GrafanaManager
->>> gm = GrafanaManager("http://localhost:3000")
->>> gm.Login("admin","admin")
+>>> gm = GrafanaManager("http://admin:admin@localhost:3000")
 ```
 
 ## Create Zabbix Datastore
