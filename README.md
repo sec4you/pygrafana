@@ -1,6 +1,6 @@
 # pygrafana
 
-Python Library to consume Grafana's API.
+Python Module to consume Grafana's API.
 
 
 ## Instalation
@@ -12,7 +12,7 @@ $ sudo pip install pygrafana
 
 ```
 >>> from pygrafana import GrafanaManager
->>> gm = GrafanaManager("localhost",3000)
+>>> gm = GrafanaManager("http://localhost:3000")
 >>> gm.Login("admin","admin")
 ```
 
@@ -58,7 +58,7 @@ $ sudo pip install pygrafana
 ```
 #!/usr/bin/python2.7
 from pygrafana import GrafanaManager
-gm = GrafanaManager("localhost",3000)
+gm = GrafanaManager("http://localhost:3000")
 gm.Login("admin","admin")
 gm.EnablePlugin("alexanderzobnin-zabbix-app")
 gm.zbx_user = "admin"
