@@ -10,22 +10,36 @@ $ sudo pip install pygrafana
 
 ## Login into Grafana
 
-
 ```
 URL = http://<USERNAME>:<PASSWORD>@<SERVER>:<PORT>
 >>> from pygrafana import GrafanaManager
 >>> gm = GrafanaManager("http://admin:admin@localhost:3000")
 ```
 
-## Create Zabbix Datastore
+## Create Datastore
 
-### TO-DO, fill parameters of other datastore types
+> TO-DO: Add all the Datastore types
 
+Supported Datastores by now:
+ - Zabbix
+ - MySQL
+
+### Zabbix
 ```
 >>> gm.zbx_user = "admin"
 >>> gm.zbx_pswd = "zabbix"
 >>> gm.zbx_url = "http://localhost/api_jsonrpc.php"
 >>> gm.CreateDatastore("Zabbix")
+```
+
+### MySQL
+```
+>>> gm.mysql_host = "10.0.0.1"
+>>> gm.mysql_port = "3306"
+>>> gm.mysql_db = "database1"
+>>> gm.mysql_user = "user"
+>>> gm.mysql_pswd = "password"
+>>> gm.CreateDatastore("MySQL")
 ```
 
 ## Import Dashboard
@@ -47,11 +61,27 @@ URL = http://<USERNAME>:<PASSWORD>@<SERVER>:<PORT>
 >>> gm.EnablePlugin("alexanderzobnin-zabbix-app")
 ```
 
+
+## Change Grafana Theme
+
+```
+>>> gm.ChangeTheme("light")
+```
+
+
+## Star a Dashboard
+
+```
+>>> gm.StarDashboard("3")
+```
+
+
 ## Through Proxy
 
 ```
 >>> gm.proxies = {'http':'http://localhost:8080','https':'https://localhost:8443'}
 ```
+
 
 ## Examples
 
@@ -59,8 +89,7 @@ URL = http://<USERNAME>:<PASSWORD>@<SERVER>:<PORT>
 ```
 #!/usr/bin/python2.7
 from pygrafana import GrafanaManager
-gm = GrafanaManager("http://localhost:3000")
-gm.Login("admin","admin")
+gm = GrafanaManager("http://admin:admin@localhost:3000")
 gm.EnablePlugin("alexanderzobnin-zabbix-app")
 gm.zbx_user = "admin"
 gm.zbx_pswd = "zabbix"

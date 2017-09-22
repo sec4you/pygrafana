@@ -2,12 +2,6 @@
 
 # Copyrights (c) Sec4You Consulting.
 
-# === Change log:
-#
-# 2017, Sep, Angelo Moura
-#    - Changed self.oim_server from os.getenv to a string
-#    - Removed unecessary imports
-
 import requests
 import yaml
 
@@ -16,18 +10,21 @@ class GrafanaManager(object):
     self.server = server
     self.proxies = False
     self.verify = False
-
     self.zbx_user = ""
     self.zbx_pswd = ""
     self.zbx_url = ""
-
     self.oim_server = ""
+    self.mysql_host = ""
+    self.mysql_port = ""
+    self.mysql_db = ""
+    self.mysql_user = ""
+    self.mysql_pswd = ""
 
   def EnablePlugin(self,plugin):
     jdata = '{"enabled":true,"pinned":true,"jsonData":null}'
     jdata = yaml.load(jdata)
     enable = requests.post("{}/api/plugins/{}/settings".format(self.server,plugin),json=jdata, proxies=self.proxies, verify=self.verify)
-    print enable.text
+    return enable.text
 
   def CreateDatastore(self,datastore):
     #Datastores supported:
@@ -36,31 +33,50 @@ class GrafanaManager(object):
       jdata = '{{"name":"Zabbix","type":"alexanderzobnin-zabbix-datasource","url":"{}","access":"direct","jsonData":{{"dbConnection":{{"enable":false}},"username":"{}","password":"{}"}},"secureJsonFields":{{}},"isDefault":true}}'.format(self.zbx_url,self.zbx_user,self.zbx_pswd)
       jdata = yaml.load(jdata)
       enable = requests.post("{}/api/datasources".format(self.server),json=jdata, proxies=self.proxies, verify=self.verify)
-      print enable.text
+      return enable.text
+    elif datastore == "MySQL":
+      jdata = '{{"name":"MySQL","type":"mysql","url":"{}:{}","access":"proxy","jsonData":{{}},"secureJsonFields":{{}},"user":"{}","password":"{}","database":"{}"}}'.format(self.mysql_host, self.mysql_port, self.mysql_user, self.mysql_pswd, self.mysql_db)
+      jdata = yaml.load(jdata)
+      enable = requests.post("{}/api/datasources".format(self.server),json=jdata, proxies=self.proxies, verify=self.verify)
+      return enable.text
     else:
-      print "Datastore not supported."
+      return "Datastore not supported."
 
   def ImportDashboard(self,dashboard):
     dash = '{"dashboard":'+ open(dashboard,"r").read() + '}'
     if self.oim_server:
       dash.replace("<SERVER>",self.oim_server)
     jdata = yaml.load(dash)
-    enable = requests.post("{}/api/dashboards/db".format(self.server),json=jdata, proxies=self.proxies, verify=self.verify)
-    print enable.text
+    imprt = requests.post("{}/api/dashboards/db".format(self.server),json=jdata, proxies=self.proxies, verify=self.verify)
+    return imprt.text
 
+  def StarDashboard(self, id):
+    star = requests.post("{}/api/user/stars/dashboard/{}".format(self.server,id),proxies=self.proxies, verify=self.verify)
+    return star.text
 
   def DeleteDashboard(self, dashboard):
     delete = requests.delete("{}/api/dashboards/db/{}".format(self.server, dashboard), proxies=self.proxies, verify=self.verify)
-    print delete.text
+    return delete.text
 
-#if __name__ == "__main__":
-#  gm = GrafanaManager("localhost",3000)
-  # Uncomment to enable API requests through proxy
-  #gm.proxies = {'http':'http://localhost:8080','https':'https://localhost:8443'}
-#  gm.Login("admin","admin")
-  #gm.EnablePlugin("alexanderzobnin-zabbix-app")
-  #gm.zbx_user = "admin"
-  #gm.zbx_pswd = "zabbix"
-  #gm.zbx_url = "http://localhost/api_jsonrpc.php"
-  #gm.CreateDatastore("Zabbix")
-#  gm.ImportDashboard("./oim_dashboard.json")
+  def ChangeTheme(self, theme):
+    change = requests.put("{}/api/org/preferences".format(self.server),data={"theme":"{}".format(theme),"timezone":"","homeDashboardId":""})
+    return change.text
+
+
+
+#  def DefaultDashboard(self, id):
+#    #NOT WORKING
+#    jdata = {"theme":"","timezone":"","homeDashboardId":int(id)}
+#    print jdata
+#    default = requests.put("{}/api/org/preferences".format(self.server),data=jdata)
+#    print default.text
+
+# === Change log:
+#
+# 2017, Sep, Angelo Moura
+#    - Changed self.oim_server from os.getenv to a string
+#    - Removed unecessary imports
+#    - Added Star Dashboard Method
+#    - Added Change Theme Method
+
+
