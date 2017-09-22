@@ -37,7 +37,7 @@ pipeline {
                 createProfile: true,
                 uploadIncludesPattern: 'dist/**.zip',
                 vpassword: "${env.veracode_password}",
-                vuser: "${env.veracode_Suriname}"
+                vuser: "${env.veracode_username}"
               }
             }
             
