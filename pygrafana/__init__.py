@@ -59,7 +59,7 @@ class GrafanaManager(object):
     return delete.text
 
   def ChangeTheme(self, theme):
-    change = requests.put("{}/api/org/preferences".format(self.server),data={"theme":"{}".format(theme),"timezone":"","homeDashboardId":""})
+    change = requests.put("{}/api/user/preferences".format(self.server),data={"theme":"{}".format(theme),"timezone":"","homeDashboardId":""})
     return change.text
 
   def CreateOrganization(self, name):

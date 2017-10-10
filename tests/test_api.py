@@ -68,7 +68,7 @@ def test_five():
 # ChangeTheme
 @httpretty.activate
 def test_six():
-  httpretty.register_uri(httpretty.PUT, "http://grafana/api/org/preferences",
+  httpretty.register_uri(httpretty.PUT, "http://grafana/api/user/preferences",
     body='{"message":"Preferences updated"}'
   )
   test_6 = gm.ChangeTheme("light")
