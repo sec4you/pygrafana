@@ -62,7 +62,7 @@ Supported Datastores by now:
 ```
 
 
-## Change Grafana Theme
+## Change Grafana's Theme
 
 ```
 >>> gm.ChangeTheme("light")
@@ -74,6 +74,13 @@ Supported Datastores by now:
 ```
 >>> gm.StarDashboard("3")
 ```
+
+## Create an Organization
+
+```
+>>> gm.CreateOrganization("OrganizationName")
+```
+
 
 
 ## Through Proxy

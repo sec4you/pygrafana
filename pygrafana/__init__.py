@@ -62,7 +62,9 @@ class GrafanaManager(object):
     change = requests.put("{}/api/org/preferences".format(self.server),data={"theme":"{}".format(theme),"timezone":"","homeDashboardId":""})
     return change.text
 
-
+  def CreateOrganization(self, name):
+    create = requests.post("{}/api/orgs".format(self.server),data={"name":"{}".format(name)})
+    return create.text
 
 #  def DefaultDashboard(self, id):
 #    #NOT WORKING

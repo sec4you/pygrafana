@@ -74,9 +74,19 @@ def test_six():
   test_6 = gm.ChangeTheme("light")
   assert test_6 == '{"message":"Preferences updated"}'
 
+
+@httpretty.activate
+def test_seven():
+  httpretty.register_uri(httpretty.POST, "http://grafana/api/orgs",
+    body='{"message":"Organization created","orgId":2}'
+  )
+  test_7 = gm.CreateOrganization("Cliente1")
+  assert test_7 == '{"message":"Organization created","orgId":2}'
+
 test_one()
 test_two()
 test_three()
 test_four()
 test_five()
 test_six()
+test_seven()
