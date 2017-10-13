@@ -1,5 +1,9 @@
 pipeline {
   agent any
+  environment {
+    SONARQUBE = "true"
+    VERACODE = "false"
+  }
   stages {
     stage('Build') {
       steps {
@@ -17,31 +21,31 @@ pipeline {
         parallel(
           "SonarQube Analysis": {
             script {
-              env.PROJECT = "pygrafana"
-              scannerHome = tool 'sonarqube-scanner';
-              withSonarQubeEnv('sonarqube-server') {
-                sh "cp /tmp/${env.PROJECT}-sonar-scanner.properties /var/jenkins_home/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarqube-scanner/conf/sonar-scanner.properties ; ${scannerHome}/bin/sonar-scanner"
-              }
+              if (SONARQUBE == "true") {
+                env.PROJECT = "pygrafana"
+                scannerHome = tool 'sonarqube-scanner';
+                withSonarQubeEnv('sonarqube-server') {
+                  sh "cp /tmp/${env.PROJECT}-sonar-scanner.properties /var/jenkins_home/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarqube-scanner/conf/sonar-scanner.properties ; ${scannerHome}/bin/sonar-scanner"
+                }
+              }             
             }
-            
-            
           },
           "Veracode Analysis": {
             script {
-              withCredentials([usernamePassword(credentialsId: 'VeracodeAPI', passwordVariable: 'veracode_password', usernameVariable: 'veracode_username')]) {
-                veracode applicationName: 'python-test',
-                debug: true,
-                timeout: 480,
-                criticality: 'Medium',
-                scanName: '$timestamp python_test #$buildnumber',
-                createProfile: true,
-                uploadIncludesPattern: 'dist/**.zip',
-                vpassword: "${env.veracode_password}",
-                vuser: "${env.veracode_username}"
-              }
+              if (VERACODE == "true") {
+                 withCredentials([usernamePassword(credentialsId: 'VeracodeAPI', passwordVariable: 'veracode_password', usernameVariable: 'veracode_username')]) {
+                   veracode applicationName: 'python-test',
+                   debug: true,
+                   timeout: 480,
+                   criticality: 'Medium',
+                   scanName: '$timestamp python_test #$buildnumber',
+                   createProfile: true,
+                   uploadIncludesPattern: 'dist/**.zip',
+                   vpassword: "${env.veracode_password}",
+                   vuser: "${env.veracode_username}"
+                }
+	      }
             }
-            
-            
           }
         )
       }
