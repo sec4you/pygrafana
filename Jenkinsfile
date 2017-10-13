@@ -1,8 +1,9 @@
 pipeline {
   agent any
   environment {
-    SONARQUBE = "true"
-    VERACODE = "false"
+    PROJECT="pygrafana"
+    SONARQUBE="false"
+    VERACODE="false"
   }
   stages {
     stage('Build') {
@@ -22,10 +23,9 @@ pipeline {
           "SonarQube Analysis": {
             script {
               if (SONARQUBE == "true") {
-                env.PROJECT = "pygrafana"
                 scannerHome = tool 'sonarqube-scanner';
                 withSonarQubeEnv('sonarqube-server') {
-                  sh "cp /tmp/${env.PROJECT}-sonar-scanner.properties /var/jenkins_home/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarqube-scanner/conf/sonar-scanner.properties ; ${scannerHome}/bin/sonar-scanner"
+                  sh "cp /tmp/${PROJECT}-sonar-scanner.properties /var/jenkins_home/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarqube-scanner/conf/sonar-scanner.properties ; ${scannerHome}/bin/sonar-scanner"
                 }
               }             
             }
@@ -34,11 +34,11 @@ pipeline {
             script {
               if (VERACODE == "true") {
                  withCredentials([usernamePassword(credentialsId: 'VeracodeAPI', passwordVariable: 'veracode_password', usernameVariable: 'veracode_username')]) {
-                   veracode applicationName: 'python-test',
+                   veracode applicationName: 'python-app',
                    debug: true,
                    timeout: 480,
                    criticality: 'Medium',
-                   scanName: '$timestamp python_test #$buildnumber',
+                   scanName: '$timestamp python-app #$buildnumber',
                    createProfile: true,
                    uploadIncludesPattern: 'dist/**.zip',
                    vpassword: "${env.veracode_password}",
@@ -52,7 +52,7 @@ pipeline {
     }
     stage('Nexus Upload') {
       steps {
-        sh '. venv/bin/activate ; vers=$(pip freeze | grep pygrafana | sed -n \'s/pygrafana==//p\') ; package=$(echo "dist/pygrafana-$vers.tar.gz") ; twine upload $package ; rm -rf dist/*'
+        sh '. venv/bin/activate ; vers=$(pip freeze | grep "${PROJECT}" | sed -n \"s/${PROJECT}==//p\") ; package=$(echo "dist/${PROJECT}-$vers.tar.gz") ; twine upload $package ; rm -rf dist/*'
       }
     }
   }
